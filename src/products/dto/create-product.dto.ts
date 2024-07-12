@@ -17,7 +17,7 @@ export class CreateProductDto {
 
   @IsString()
   @IsOptional()
-  description: string;
+  description?: string;
 
   @IsString()
   @IsIn(['analgésicos', 'gel', 'cremas'])
