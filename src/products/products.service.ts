@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product, ProductImage } from './entities';
@@ -16,6 +16,8 @@ export class ProductsService {
     private readonly productImageRepository: Repository<ProductImage>,
 
     private readonly errorService: ErrorHandlerService,
+
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(createProductDto: CreateProductDto) {
@@ -49,15 +51,47 @@ export class ProductsService {
     return product;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: string) {
+    return await this.productRepository.findOneBy({ id });
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    console.log(updateProductDto);
+  async update(id: string, updateProductDto: UpdateProductDto) {
+    const { images, ...dataToUpdate } = updateProductDto;
+    const product = await this.productRepository.preload({
+      id,
+      ...dataToUpdate,
+    });
+
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    if (!product)
+      throw new NotFoundException(`Product whit id: ${id} not found`);
+
+    try {
+      if (images) {
+        await queryRunner.manager.delete(ProductImage, { product: { id } });
+
+        product.images = images.map((item) =>
+          this.productImageRepository.create({ url: item }),
+        );
+      } else {
+      }
+      await queryRunner.manager.save(product);
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
+    } catch (error) {
+      this.errorService.errorHandler(error);
+    }
+    return product;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: string) {
+    const product = await this.findOne(id);
+    if (!product)
+      throw new NotFoundException(`Product whit id: ${id} not found`);
+    await this.productRepository.delete(id);
+    return;
   }
 }
