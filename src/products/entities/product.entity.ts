@@ -9,7 +9,9 @@ export class Product {
   @Column('text')
   brand: string;
 
-  @Column('text')
+  @Column('text', {
+    unique: true,
+  })
   name: string;
 
   @Column('text')

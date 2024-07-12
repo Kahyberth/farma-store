@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsModule } from './products/products.module';
+import { ErrorHandlerService } from './error-handler/error-handler.service';
 
 @Module({
   imports: [
@@ -19,6 +20,6 @@ import { ProductsModule } from './products/products.module';
     ProductsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [ErrorHandlerService],
 })
 export class AppModule {}
