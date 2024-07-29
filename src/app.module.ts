@@ -3,6 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductsModule } from './products/products.module';
 import { ErrorHandlerService } from './error-handler/error-handler.service';
+import { AuthModule } from './auth/auth.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { ErrorHandlerService } from './error-handler/error-handler.service';
       synchronize: true,
     }),
     ProductsModule,
+    AuthModule,
+    CommonModule,
   ],
   controllers: [],
   providers: [ErrorHandlerService],
