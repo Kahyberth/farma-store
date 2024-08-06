@@ -5,6 +5,7 @@ import { ProductsModule } from './products/products.module';
 import { ErrorHandlerService } from './error-handler/error-handler.service';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { CommonModule } from './common/common.module';
     ProductsModule,
     AuthModule,
     CommonModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [ErrorHandlerService],

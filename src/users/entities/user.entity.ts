@@ -6,8 +6,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity('users')
-export class User {
+@Entity()
+export class Users {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -31,6 +31,9 @@ export class User {
     default: ['user'],
   })
   role: string[];
+
+  @Column('text')
+  fullName: string;
 
   @BeforeInsert()
   checkFieldsBeforeInsert() {
